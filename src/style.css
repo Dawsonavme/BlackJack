@@ -1,0 +1,9 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* disables scrolling */
+  height: 100%;     /* ensures body matches viewport height */
+}
+canvas {
+  display: block;   /* removes extra inline spacing */
+}
