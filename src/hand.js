@@ -1,10 +1,11 @@
 export class Hand {
   cards;
 
+  constructor(){
+    this.cards = [];
+  }
+
   add(card) {
-    if (!this.cards) {
-      this.cards = [];
-    }
     this.cards.push(card);
   }
 
