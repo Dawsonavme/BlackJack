@@ -2,7 +2,7 @@
 import { preloadAll, loadCard } from "./cardLoader.js";
 import {  CardConfig } from "./cardTypes.js";
 import { Deck } from "./deck.js";
-import { Player } from "./player.js";
+import { Dealer, Player } from "./player.js";
 import {drawTextOnArc} from './utils.js'
 
 
@@ -12,6 +12,7 @@ let ctx = canvas.getContext('2d');
 
 let HEIGHT = window.innerHeight
 let WIDTH = window.innerWidth;
+
 
 function fitCanvasToScreen() {
   const dpr = window.devicePixelRatio || 1;
@@ -25,17 +26,14 @@ function fitCanvasToScreen() {
 fitCanvasToScreen();
 window.addEventListener("resize", fitCanvasToScreen);
 
-const size = "Large"; // or "Medium"/"Small"
-const deck = new Deck(true, 1); // shuffle=true, 1 deck
-const player = new Player("You");
-const dealer = new Player("Dealer");
-
 //Background source
 const bg = new Image();
 bg.src = "Assets/vecteezy_green-casino-poker-table-texture-game-background_24232274_632/vecteezy_green-casino-poker-table-texture-game-background_24232274.jpg"
 
-
-
+const size = "Large"; // or "Medium"/"Small"
+const deck = new Deck(true, 1); // shuffle=true, 1 deck
+const player = new Player();
+const dealer = new Dealer();
 
 //Example Function
 async function drawExampleCard() {
