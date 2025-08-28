@@ -35,5 +35,8 @@ export class Deck{
   size() {
     return this.cards.length;
   }
+  logDeck(){
+    return this.cards;
+  }
 
 }

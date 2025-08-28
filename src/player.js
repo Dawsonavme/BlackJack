@@ -1,4 +1,4 @@
-import { Hand } from "./hand";
+import { Hand } from "./hand.js";
 
 export class Player {
   constructor(name = "Player", chips = 0) {
@@ -16,23 +16,5 @@ export class Player {
     if (amount > this.chips) throw new Error("Not enough chips");
     this.chips -= amount;
     return amount;
-  }
-}
-
-
-
-import { Hand } from "./hand.js";
-
-export class Dealer {
-  constructor() {
-    this.hand = new Hand();
-  }
-
-  resetHand() {
-    this.hand = new Hand();
-  }
-
-  mustHit() {
-    return this.hand.getValues()[0] < 17;
   }
 }

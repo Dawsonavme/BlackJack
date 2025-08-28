@@ -19,4 +19,8 @@ export async function preloadAll(size, base = "/Assets/Cards Pack/PNG") {
   await Promise.all(
     CardTypes.CardConfig.suits.flatMap(s => CardTypes.CardConfig.ranks.map(r => loadCard(size, r, s, base)))
   );
+
+  await Promise.all(
+    CardTypes.cardDown.color.flatMap(c => CardTypes.cardDown.type.map(t => loadCard(size, t, c, base)))
+  );
 }

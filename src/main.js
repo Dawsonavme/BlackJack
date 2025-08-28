@@ -1,18 +1,14 @@
 // main.ts
 import { preloadAll, loadCard } from "./cardLoader.js";
 import {  CardConfig } from "./cardTypes.js";
-import { Deck } from "./deck.js";
-import { Dealer, Player } from "./player.js";
-import {drawTextOnArc} from './utils.js'
-
+import { Game } from "./game.js";
+import { Button } from "./utils.js";
 
 let canvas = document.getElementById('canvas') ;
 let ctx = canvas.getContext('2d');
 
-
 let HEIGHT = window.innerHeight
 let WIDTH = window.innerWidth;
-
 
 function fitCanvasToScreen() {
   const dpr = window.devicePixelRatio || 1;
@@ -26,36 +22,76 @@ function fitCanvasToScreen() {
 fitCanvasToScreen();
 window.addEventListener("resize", fitCanvasToScreen);
 
+const size = "Large"; // or "Medium" | "Small"
+
 //Background source
 const bg = new Image();
 bg.src = "Assets/vecteezy_green-casino-poker-table-texture-game-background_24232274_632/vecteezy_green-casino-poker-table-texture-game-background_24232274.jpg"
 
-const size = "Large"; // or "Medium"/"Small"
-const deck = new Deck(true, 1); // shuffle=true, 1 deck
-const player = new Player();
-const dealer = new Dealer();
+//Initialize Game Object
+let game = new Game();
+game.start();  
+//Buttons
+const buttons = [
+  new Button(canvas.width /2 + 80, canvas.height/2 + 240, 120, 50, "Hit", game.playerHit.bind(game)),
+  new Button(canvas.width /2 + 80, canvas.height/2 + 300, 120, 50, "Stand", () => console.log("Stand")),
+]
+
+
+canvas.addEventListener("click", (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
+
+  for (const button of buttons) {
+    if (button.isInside(mouseX, mouseY)) {
+      button.onClick();
+      break; // stop after first match
+    }
+  }
+});
+
 
 //Example Function
-async function drawExampleCard() {
-  //Players Hand POS
+async function drawCardPile() {
+  let x = WIDTH * 0.5 + 150;
+  let y = HEIGHT/2 - 350;
+  const img1 = await loadCard(size, "1", "Back Blue");
+  for(let z = 0; z<3; z++){
+  ctx.drawImage(img1, x, y-(z*5), CardConfig.CARD_W, CardConfig.CARD_H);
+  }
+}
+
+async function drawCards(rank, suit, dx, dy){
   let x = WIDTH * 0.5 - CardConfig.CARD_W;
   let y = HEIGHT - 200;
-  const img1 = await loadCard("Large", "1", "Spades");
-  const img2 = await loadCard("Large", "1", "Hearts");
-
-  ctx.drawImage(img1, x, y, CardConfig.CARD_W, CardConfig.CARD_H);
-  ctx.drawImage(img2, x +50, y, CardConfig.CARD_W, CardConfig.CARD_H);
+  const img = await loadCard(size, rank, suit);
+  ctx.drawImage(img, x + dx, y - dy, CardConfig.CARD_W, CardConfig.CARD_H);
 }
 
 
-function gameLoop() {
+
+async function gameLoop() {
   //Draw Background
   ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
-  //Testing displaying cards
-  drawExampleCard()
-  drawTextOnArc(ctx,"Dealer Must hit on 17 or less", HEIGHT/2, WIDTH/2,500, 200, true);
+  
+  //Draw Card Pile
+  drawCardPile()
+  
+  drawCards(game.player.hand.cards[0].rank, game.player.hand.cards[0].suit, 0, 0);
+  drawCards(game.player.hand.cards[1].rank, game.player.hand.cards[1].suit, 50,0);
+
+  //Hide first Card
+  // drawCards(game.dealer.hand.cards[0].rank, game.dealer.hand.cards[0].suit, 0, 400);
+  drawCards("1","Back Blue", 0, 400)
+  drawCards(game.dealer.hand.cards[1].rank, game.dealer.hand.cards[1].suit, 50, 400);
+
+  buttons.forEach(button => button.draw(ctx));
+  
   requestAnimationFrame(gameLoop);
 }
 
+
+   
 //Call Gameloop
 gameLoop()
